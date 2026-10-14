@@ -62,17 +62,26 @@ bool game_new(struct Game **game) {
     }
 
 
+    g->l_framebuffer = CANVAS_WIDTH * CANVAS_HEIGHT;
     g->framebuffer = calloc(CANVAS_WIDTH * CANVAS_HEIGHT, sizeof(uint8_t));
     if(g->framebuffer == NULL) {
         fprintf(stderr, "Error calloc for framebuffer.\n");
         return false;
     }
 
+
     struct Snake *snake = NULL;  
     if (!snake_init(&snake)) {
        return false; 
     }
     g->snake = snake;
+
+    struct Apple *apple = NULL;
+    if (!apple_init(&apple)) {
+        return false;
+    }
+    g->apple = apple;
+
 
     g->is_running = true;
     return true;
@@ -115,6 +124,9 @@ void game_free(struct Game **game) {
 }
 
 
+
+
+
 void game_events(struct Game *g) {
     while (SDL_PollEvent(&g->event)) {
         switch (g->event.type) {
@@ -126,30 +138,24 @@ void game_events(struct Game *g) {
                 case SDL_SCANCODE_ESCAPE:
                     g->is_running = false;
                 break;
+
+                //movement inputs
                 case SDL_SCANCODE_W:
-                    if(g->snake->direction != SOUTH) {
-                        g->snake->direction=NORTH;
-                    }
+                    snake_set_direction(g->snake, NORTH);
                     break;
                 case SDL_SCANCODE_D:
-                    if(g->snake->direction != WEST) {
-                        g->snake->direction=EAST;
-                    }
+                    snake_set_direction(g->snake, EAST);
                     break;
                 case SDL_SCANCODE_S:
-                    if(g->snake->direction != NORTH) {
-                        g->snake->direction=SOUTH;
-                    }
+                    snake_set_direction(g->snake, SOUTH);
                     break;
                 case SDL_SCANCODE_A:
-                    if(g->snake->direction != EAST) {
-                        g->snake->direction=WEST;
-                    }
+                    snake_set_direction(g->snake, WEST);
                     break;
 
                 case SDL_SCANCODE_SPACE:
-                    g->snake->eating = true;
-                    g->snake->length+=1;
+                    // g->snake->eating = true;
+                    // g->snake->length+=1;
                     break;
                 default:
                     break;
@@ -161,10 +167,26 @@ void game_events(struct Game *g) {
 }
 
 
+void draw_apple(struct Game *g) {
+    if(g->snake->head_pos == g->apple->pos) {
+        g->snake->eating = true;
+        g->snake->length+=1;
+
+        //respawn apple
+        int x = 1 + rand() % (CANVAS_WIDTH - 2);
+        int y = 1 + rand() % (CANVAS_HEIGHT - 2);
+        g->apple->pos = y * CANVAS_WIDTH + x;
+    }
+    draw_pixel(g, g->apple->pos, 0xE0);
+
+}
+
+
 void game_run(struct Game *g) {
     while(g->is_running) {
         uint64_t start = SDL_GetPerformanceCounter();
         game_events(g);
+        draw_apple(g);
         snake_draw(g);
         renderer_update(g);
 

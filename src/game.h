@@ -6,7 +6,6 @@
 #define TARGET_FPS 1.0/60
 #define GAME_DELAY_MS 80
 
-
 #define CANVAS_WIDTH 32 
 #define CANVAS_HEIGHT 32
 #define CANVAS_PITCH CANVAS_WIDTH 
@@ -19,23 +18,31 @@ typedef enum CARDINAL_ENUM{
     NORTH,
     EAST,
     SOUTH,
-    WEST
+    WEST,
+    NoDir
 } Cardinal;
 
 struct Tail {
     uint32_t pos;    
 };
 
+
+struct Apple {
+    uint32_t pos; 
+};
+
+
 struct Snake {
     int length; 
     uint32_t head_pos;
     uint32_t bottom_pos;
-    Cardinal direction;   
     struct Tail *tails;
     bool eating; // true after the frame an apple is eaten, used to delay the tails by 1, in effect extended the tails
+    bool moving;
+    Cardinal direction;
+    Cardinal move_buffer[2];
+    size_t l_move_buffer;
 };
-
-
 
 
 struct Game {
@@ -43,9 +50,11 @@ struct Game {
   SDL_Renderer *renderer;
   SDL_Texture *canvas;
   uint8_t *framebuffer;
+  size_t l_framebuffer;
   SDL_Event event;
   bool is_running;
   struct Snake *snake;
+  struct Apple *apple;
 };
 
 
@@ -62,5 +71,10 @@ uint32_t coord_to_array(uint32_t x, uint32_t y);
 
 bool snake_init(struct Snake **snake);
 bool snake_draw(struct Game *g);
+void snake_set_direction(struct Snake *s, Cardinal inputed_dir);
+Cardinal snake_get_direction(struct Snake *s);
+
+bool apple_init(struct Apple **apple);
+void apple_eat(struct Game *g);
 
 #endif
