@@ -152,6 +152,20 @@ void game_events(struct Game *g) {
                 case SDL_SCANCODE_A:
                     snake_set_direction(g->snake, WEST);
                     break;
+                case SDL_SCANCODE_UP:
+                    snake_set_direction(g->snake, NORTH);
+                    break;
+                case SDL_SCANCODE_RIGHT:
+                    snake_set_direction(g->snake, EAST);
+                    break;
+                case SDL_SCANCODE_DOWN:
+                    snake_set_direction(g->snake, SOUTH);
+                    break;
+                case SDL_SCANCODE_LEFT:
+                    snake_set_direction(g->snake, WEST);
+                    break;
+
+
 
                 case SDL_SCANCODE_SPACE:
                     // g->snake->eating = true;
