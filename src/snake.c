@@ -146,6 +146,7 @@ bool snake_lost(struct Snake *s) {
 bool snake_draw(struct Game *g) {
     struct Snake *s = g->snake;
 
+
     // snake position prior to being updated
     uint32_t prior_snake_pos = s->head_pos;
 

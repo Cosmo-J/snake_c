@@ -1,20 +1,6 @@
 #include "game.h"
 #include "rendering.h"
-
-uint32_t array_to_x(uint32_t array_index) {
-    return array_index % CANVAS_WIDTH;
-}
-
-
-uint32_t array_to_y(uint32_t array_index) {
-    return array_index / CANVAS_WIDTH;
-}
-
-
-uint32_t coord_to_array(uint32_t x, uint32_t y) {
-   return (y * CANVAS_WIDTH) + x;  
-}
-
+#include "apple.h"
 
 bool game_init_sdl(struct Game *g) {
 
@@ -76,6 +62,7 @@ bool game_new(struct Game **game) {
     }
     g->snake = snake;
 
+
     struct Apple *apple = NULL;
     if (!apple_init(&apple)) {
         return false;
@@ -102,7 +89,6 @@ void game_free(struct Game **game) {
             g->framebuffer=NULL;
         }
 
-
         if (g->window) {
             SDL_DestroyWindow(g->window);
             g->window = NULL;
@@ -122,9 +108,6 @@ void game_free(struct Game **game) {
        printf("All Clean!\n");
     }    
 }
-
-
-
 
 
 void game_events(struct Game *g) {
@@ -185,12 +168,9 @@ void draw_apple(struct Game *g) {
     if(g->snake->head_pos == g->apple->pos) {
         g->snake->eating = true;
         g->snake->length+=1;
-
-        //respawn apple
-        int x = 1 + rand() % (CANVAS_WIDTH - 2);
-        int y = 1 + rand() % (CANVAS_HEIGHT - 2);
-        g->apple->pos = y * CANVAS_WIDTH + x;
+        g->apple->pos = apple_spawn(g);
     }
+    
     draw_pixel(g, g->apple->pos, 0xE0);
 
 }

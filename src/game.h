@@ -27,10 +27,6 @@ struct Tail {
 };
 
 
-struct Apple {
-    uint32_t pos; 
-};
-
 
 struct Snake {
     int length; 
@@ -64,17 +60,12 @@ void game_run(struct Game *g);
 void game_free(struct Game **game);
 bool game_new(struct Game **game);
 
-uint32_t array_to_x(uint32_t array_index);
-uint32_t array_to_y(uint32_t array_index);
-uint32_t coord_to_array(uint32_t x, uint32_t y);
-
 
 bool snake_init(struct Snake **snake);
 bool snake_draw(struct Game *g);
 void snake_set_direction(struct Snake *s, Cardinal inputed_dir);
 Cardinal snake_get_direction(struct Snake *s);
 
-bool apple_init(struct Apple **apple);
-void apple_eat(struct Game *g);
+
 
 #endif

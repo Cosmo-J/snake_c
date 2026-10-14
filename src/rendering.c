@@ -1,5 +1,19 @@
 #include "rendering.h"
+#include "apple.h"
 
+uint32_t array_to_x(uint32_t array_index) {
+    return array_index % CANVAS_WIDTH;
+}
+
+
+uint32_t array_to_y(uint32_t array_index) {
+    return array_index / CANVAS_WIDTH;
+}
+
+
+uint32_t coord_to_array(uint32_t x, uint32_t y) {
+   return (y * CANVAS_WIDTH) + x;  
+}
 bool draw_pixel_xy(struct Game *g, uint32_t x, uint32_t y, uint8_t colour) {
     if(x >= CANVAS_WIDTH || y >= CANVAS_HEIGHT){
         fprintf(stderr, "Error updating framebuffer, accessed out of range.\n");
@@ -16,8 +30,11 @@ bool draw_pixel(struct Game *g, uint32_t buffer_index, uint8_t colour) {
         fprintf(stderr, "Error updating framebuffer, accessed out of range.\n");
         return false;
     }
-     
+
+    if (g->framebuffer[buffer_index] == colour) return true; //early return if no change
+
     g->framebuffer[buffer_index] = colour;
+
     return true;
 }
 
